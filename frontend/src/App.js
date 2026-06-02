@@ -25,6 +25,8 @@ import EventsPage from "./pages/EventsPage";
 import EventDetailPage from "./pages/EventDetail";
 import NewEventPage from "./pages/NewEventPage";
 import RootLayout from "./pages/Root";
+import EditEventPage from "./pages/EditEventPage";
+import EventsRootLayout from "./pages/EventsRoot";
 
 const router = createBrowserRouter([
   {
@@ -32,24 +34,40 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <HomePage />,
       },
       {
-        path: "/events",
-        element: <EventsPage />,
-      },
-      {
-        path: "/events/:eventId",
-        element: <EventDetailPage />,
-      },
-      {
-        path: "/events/new",
-        element: <NewEventPage />,
-      },
-      {
-        path: "/events/:eventId/edit",
-        element: <EditEventPage />,
+        path: "events",
+        element: <EventsRootLayout />,
+        children: [
+          {
+            index: true,
+            element: <EventsPage />,
+            loader: async () => {
+              const response = await fetch("http://localhost:8080/events");
+
+              // if (!response.ok) {
+              //   setError("Fetching events failed.");
+              // } else {
+              const resData = await response.json();
+              return resData.events;
+              // }
+            },
+          },
+          {
+            path: ":eventId",
+            element: <EventDetailPage />,
+          },
+          {
+            path: "new",
+            element: <NewEventPage />,
+          },
+          {
+            path: ":eventId/edit",
+            element: <EditEventPage />,
+          },
+        ],
       },
     ],
   },
