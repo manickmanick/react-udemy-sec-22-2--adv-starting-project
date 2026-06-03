@@ -1,43 +1,12 @@
 import EventForm from "../components/EventForm";
-import { redirect } from "react-router-dom";
+// import { redirect } from "react-router-dom";
 
 export default function NewEventPage() {
   return (
     <>
-      <EventForm />
+      <EventForm method="post" />
     </>
   );
 }
 
-export async function action({ request, params }) {
-  console.log("action function calling");
 
-  const data = await request.formData();
-
-  const eventData = {
-    title: data.get("title"),
-    image: data.get("image"),
-    date: data.get("date"),
-    description: data.get("description"),
-  };
-
-  console.log(eventData);
-
-  const res = await fetch("http://localhost:8080/events", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(eventData),
-  });
-
-  // console.log("status:", res.status);
-
-  if (!res.ok) {
-    throw new Response(JSON.stringify({ message: "Could not save event." }), {
-      status: 500,
-    });
-  }
-
-  return redirect('/events');
-}
